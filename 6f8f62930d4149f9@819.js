@@ -17,7 +17,6 @@ function _chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin,creat
   console.log(dataByRegion)
   console.log(data)
   console.log(color)
-  console.log(color)
   console.log(DOM)
   console.log(width)
   console.log(height)
