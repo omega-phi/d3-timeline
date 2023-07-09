@@ -2,7 +2,7 @@
 
 export function chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin,createTooltip,y,getRect,getTooltipContent,axisTop,axisBottom)
 {
-  console.log('hello chart')
+  console.log('hello chart!!!')
   let filteredData;
   if(sorting !== "time") {
     filteredData = [].concat.apply([], dataByRegion.map(d=>d.values));
@@ -12,12 +12,17 @@ export function chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin
 
   filteredData.forEach(d=> d.color = d3.color(color(d.region)))
 
+  console.log(filteredData)
 
   let parent = this; 
   if (!parent) {
     parent = document.createElement("div");
-    const svg = d3.select(DOM.svg(width, height));
-
+    //document.createElement("svg")
+    // const svg = d3.select(DOM.svg(width, height));
+    const svg = d3.select(document.body.appendChild(document.createElement("svg")))
+      .attr("width", width + "px")
+      .attr("height", height + "px");
+    //const svg = d3.select("svg");
 
     const g = svg.append("g").attr("transform", (d,i)=>`translate(${margin.left} ${margin.top})`);
 

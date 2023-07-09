@@ -36,6 +36,7 @@ function _chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin,creat
 
   filteredData.forEach(d=> d.color = d3.color(color(d.region)))
 
+  console.log(filteredData)
 
   let parent = this; 
   if (!parent) {
@@ -115,6 +116,7 @@ function _chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin,creat
 
 
   }
+  console.log(parent)
   return parent
 
 }
