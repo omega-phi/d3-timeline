@@ -1,4 +1,5 @@
 // https://observablehq.com/@tezzutezzu/world-history-timeline@819
+
 import define1 from "./e93997d5089d7165@2303.js";
 
 function _1(md){return(
@@ -59,10 +60,12 @@ function _chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin,creat
     const line = svg.append("line").attr("y1", margin.top-10).attr("y2", height-margin.bottom).attr("stroke", "rgba(0,0,0,0.2)").style("pointer-events","none");
 
     groups.attr("transform", (d,i)=>`translate(0 ${y(i)})`)
+    console.log(groups)
 
     groups
       .each(getRect)
       .on("mouseover", function(d) {
+      console.log(this)
       d3.select(this).select("rect").attr("fill", d.color.darker())
 
       tooltip
@@ -172,6 +175,8 @@ function(el) {
 
 function _getRect(d3,x,width,y){return(
 function(d){
+  console.log(this)
+  console.log(d)
   const el = d3.select(this);
   const sx = x(d.start);
   const w = x(d.end) - x(d.start);

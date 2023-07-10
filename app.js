@@ -1,7 +1,16 @@
 // import * as d3 from 'd3'
 
-export function chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin,createTooltip,y,getRect,getTooltipContent,axisTop,axisBottom)
+var g_svg;
+var data;
+var width;
+var height;
+
+export function chart(sorting,dataByRegion,p_data,d3,color,DOM,p_width,p_height,margin,createTooltip,y,getTooltipContent,axisTop,axisBottom)
 {
+  data = p_data
+  width = p_width
+  height = p_height
+  g_svg = DOM
   console.log('hello chart!!!')
   let filteredData;
   if(sorting !== "time") {
@@ -14,24 +23,22 @@ export function chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin
 
   console.log(filteredData)
 
-  let parent = this; 
+  parent = this; 
   if (!parent) {
     parent = document.createElement("div");
     //document.createElement("svg")
     // const svg = d3.select(DOM.svg(width, height));
-    const svg = d3.select(document.body.appendChild(document.createElement("svg")))
-      .attr("width", width + "px")
-      .attr("height", height + "px");
+    const svg = DOM;
     //const svg = d3.select("svg");
 
     const g = svg.append("g").attr("transform", (d,i)=>`translate(${margin.left} ${margin.top})`);
 
     const groups = g
-    .selectAll("g")
-    .data(filteredData)
-    .enter()
-    .append("g")
-    .attr("class", "civ")
+      .selectAll("g")
+      .data(filteredData)
+      .enter()
+      .append("g")
+      .attr("class", "civ")
 
 
     const tooltip = d3.select(document.createElement("div")).call(createTooltip);
@@ -40,19 +47,56 @@ export function chart(sorting,dataByRegion,data,d3,color,DOM,width,height,margin
 
     groups.attr("transform", (d,i)=>`translate(0 ${y(i)})`)
 
-    groups
-      .each(getRect)
-      .on("mouseover", function(d) {
-      d3.select(this).select("rect").attr("fill", d.color.darker())
+    console.log(groups)
 
-      tooltip
-        .style("opacity", 1)
-        .html(getTooltipContent(d))
-    })
+    groups
+      .each(function (d) {
+        console.log(d)
+        const x = d3.scaleLinear()
+            .domain([d3.min(data, d => d.start), d3.max(data, d => d.end)])
+            .range([0, width - 30 - 30])
+          
+        const y = d3.scaleBand()
+            .domain(d3.range(data.length))
+            .range([0,height - 30 - 30])
+            .padding(0.2)
+      
+        console.log(this)
+        const el = d3.select(this);
+        const sx = x(d.start);
+        const w = x(d.end) - x(d.start);
+        const isLabelRight =(sx > width/2 ? sx+w < width : sx-w>0);
+      
+        el.style("cursor", "pointer")
+      
+        el
+          .append("rect")
+          .attr("x", sx)
+          .attr("height", y.bandwidth())
+          .attr("width", w)
+          .attr("fill", d.color);
+      
+        el
+          .append("text")
+          .text(d.civilization)
+          .attr("x",isLabelRight ? sx-5 : sx+w+5)
+          .attr("y", 2.5)
+          .attr("fill", "black")
+          .style("text-anchor", isLabelRight ? "end" : "start")
+          .style("dominant-baseline", "hanging");
+      })
+      .on("mouseover", function(d) {
+        console.log(this)
+        d3.select(this).select("rect").attr("fill", d.color.darker())
+
+        tooltip
+          .style("opacity", 1)
+          .html(getTooltipContent(d))
+      })
       .on("mouseleave", function(d) {
-      d3.select(this).select("rect").attr("fill", d.color)
-      tooltip.style("opacity", 0)
-    })
+        d3.select(this).select("rect").attr("fill", d.color)
+        tooltip.style("opacity", 0)
+      })
 
 
     svg

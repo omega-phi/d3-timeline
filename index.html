@@ -15,8 +15,8 @@ import {data} from "./files/data.js"
 
 // import * as d3 from './files/d3.js'
 
-// const runtime = new Runtime();
-// const main = runtime.module(define, Inspector.into(document.body));
+const runtime = new Runtime();
+const main = runtime.module(define, Inspector.into(document.body));
 const width = 1520
 const height = 1000
 
@@ -57,31 +57,6 @@ var y = d3.scaleBand()
     .range([0,height - 30 - 30])
     .padding(0.2)
 
-var getRect = (d) => {
-  const el = d3.select(this);
-  const sx = x(d.start);
-  const w = x(d.end) - x(d.start);
-  const isLabelRight =(sx > width/2 ? sx+w < width : sx-w>0);
-
-  el.style("cursor", "pointer")
-
-  el
-    .append("rect")
-    .attr("x", sx)
-    .attr("height", y.bandwidth())
-    .attr("width", w)
-    .attr("fill", d.color);
-
-  el
-    .append("text")
-    .text(d.civilization)
-    .attr("x",isLabelRight ? sx-5 : sx+w+5)
-    .attr("y", 2.5)
-    .attr("fill", "black")
-    .style("text-anchor", isLabelRight ? "end" : "start")
-    .style("dominant-baseline", "hanging");
-}
-
 var axisTop = d3.axisTop(x)
     .tickPadding(2)
     .tickFormat(formatDate)
@@ -93,7 +68,19 @@ var axisBottom = d3.axisBottom(x)
 var regions = d3.nest().key(d=>d.region).entries(data).map(d=>d.key)
 var color = d3.scaleOrdinal(d3.schemeSet2).domain(regions)
 
-var parent = chart("region", dataByRegion, data, d3, color, d3.create("svg"), width, height, margin, createTooltip, y, getRect, getTooltipContent, axisTop, axisBottom)
+// var new_svg = document.createElement("svg")
+// new_svg.id = "new_svg"
+// document.body.appendChild(new_svg)
+// var svg = d3.select("#new_svg")
+//   .attr("width", width)
+//   .attr("height", height)
+//   .attr("viewBox", "0,0," + width + "," + height + "")
+var svg = d3.select("body")
+  .append("svg")
+  .attr("id", "new_svg")
+  .attr("width", width)
+  .attr("height", height);
+var parent = chart("region", dataByRegion, data, d3, color, svg, width, height, margin, createTooltip, y, getTooltipContent, axisTop, axisBottom)
 console.log(parent)
 document.body.appendChild(parent)
 </script>
